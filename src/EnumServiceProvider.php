@@ -57,7 +57,7 @@ class EnumServiceProvider extends ServiceProvider
             $enum = $parameters[0] ?? null;
 
             return (new EnumKey($enum))->passes($attribute, $value);
-        }, __('laravelEnum::messages.enum_key'));
+        });
 
         $this->app['validator']->extend('enum_value', function ($attribute, $value, $parameters, $validator) {
             $enum = $parameters[0] ?? null;
@@ -71,13 +71,25 @@ class EnumServiceProvider extends ServiceProvider
             $strict = !! json_decode(strtolower($strict));
 
             return (new EnumValue($enum, $strict))->passes($attribute, $value);
-        }, __('laravelEnum::messages.enum_value'));
+        });
 
         $this->app['validator']->extend('enum', function ($attribute, $value, $parameters, $validator) {
             $enum = $parameters[0] ?? null;
 
             return (new Enum($enum))->passes($attribute, $value);
-        }, __('laravelEnum::messages.enum'));
+        });
+
+        $this->app['validator']->replacer('enum_key', function ($message, $attribute, $rule, $parameters) {
+            return $message === 'validation.enum_key' ? __('laravelEnum::messages.enum'): $message;
+        });
+
+        $this->app['validator']->replacer('enum_value', function ($message, $attribute, $rule, $parameters) {
+            return $message === 'validation.enum_value' ? __('laravelEnum::messages.enum'): $message;
+        });
+
+        $this->app['validator']->replacer('enum', function ($message, $attribute, $rule, $parameters) {
+            return $message === 'validation.enum' ? __('laravelEnum::messages.enum'): $message;
+        });
     }
 
     /**
